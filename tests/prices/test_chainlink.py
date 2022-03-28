@@ -83,6 +83,23 @@ FEEDS = [
     "0xfF20817765cB7f73d4bde2e66e067E58D11095C2",
 ]
 
+@pytest.mark.parametrize('token', FEEDS)
+def test_chainlink_contains(token):
+    """
+    Tests `token in chainlink` with both lowercase address and checksum address.
+    """
+    for token in [token.lower(), convert.to_address(token)]:
+        assert token in chainlink
+
+
+@pytest.mark.parametrize('token', FEEDS)
+def test_chainlink_get_feed(token):
+    """
+    Tests `chainlink.get_feed` with both lowercase address and checksum address.
+    """
+    for token in [token.lower(), convert.to_address(token)]:
+        assert chainlink.get_feed(token) != ZERO_ADDRESS
+
 
 @pytest.mark.parametrize('token', FEEDS)
 def test_chainlink_latest(token):
