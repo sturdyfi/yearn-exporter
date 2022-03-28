@@ -1,15 +1,16 @@
-import pytest
-from brownie import Contract, chain
+
+from brownie import chain
 from yearn.networks import Network
 from yearn.utils import contract
 from yearn.v1.registry import Registry
+from tests.conftest import mainnet_only
 
 registry = None
 if chain.id == Network.Mainnet:
     registry = Registry()
 
 
-@pytest.mark.require_network('mainnet')
+@mainnet_only
 def test_get_v1_strategy():
     old_block = 10532708
     vault = next(x for x in registry.vaults if x.vault == '0x597aD1e0c13Bfe8025993D9e79C69E1c0233522e')
@@ -23,7 +24,7 @@ def test_get_v1_strategy():
     assert vault.get_controller(new_block) == vault.controller
 
 
-@pytest.mark.require_network('mainnet')
+@mainnet_only
 def test_gusd_fooling_heuristic():
     # gusd vault got mistakengly treated as curve and sent to curve apy calculations
     vault = next(x for x in registry.vaults if x.name == 'GUSD')
@@ -31,7 +32,7 @@ def test_gusd_fooling_heuristic():
     assert vault.describe(11597690)
 
 
-@pytest.mark.require_network('mainnet')
+@mainnet_only
 def test_is_curve_vault():
     non_curve = ['USDC', 'TUSD', 'DAI', 'USDT', 'YFI', 'WETH', 'GUSD', 'mUSD']
     for vault in registry.vaults:
