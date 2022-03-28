@@ -13,7 +13,7 @@ def test_compound_pricing():
 
             print(f'  exchange = {market.get_exchange_rate()}')
             print(f'underlying = {market.get_underlying_price()}')
-            print(f'     price = {compound.get_price(market.token)}')
+            print(f'     price = {compound.get_price(str(market.token))}')
 
 
 def test_compound_cap():
