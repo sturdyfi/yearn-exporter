@@ -379,9 +379,7 @@ class Treasury:
             for topics in self._topics
         ]
 
-        transfer_logs = []
-        for transfer_filter in transfer_filters:
-            transfer_logs.append(transfer_filter.get_all_entries())
+        transfer_logs = [transfer_filter.get_all_entries() for transfer_filter in transfer_filters]
 
         while True:
             for logs in transfer_logs:
@@ -394,12 +392,11 @@ class Treasury:
                 )
             if not self._watch_events_forever:
                 return
+
             time.sleep(5)
 
             # read new logs at end of loop
-            transfer_logs = []
-            for transfer_filter in transfer_filters:
-                transfer_logs.append(transfer_filter.get_new_entries())
+            transfer_logs = [transfer_filter.get_new_entries() for transfer_filter in transfer_filters]
 
 
     def process_transfers(self, logs: List) -> None:
