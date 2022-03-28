@@ -1,6 +1,7 @@
 import pytest
 from brownie import ZERO_ADDRESS, convert
 from yearn.prices.chainlink import chainlink
+from yearn.utils import contract_creation_block
 
 FEEDS = [
     "0x0000000000000000000000000000000000000024",
@@ -111,7 +112,11 @@ def test_chainlink_latest(token):
 
 @pytest.mark.parametrize('token', FEEDS)
 def test_chainlink_before_registry(token):
-    price = chainlink.get_price(token, block=12800000)
+    test_block = 12800000
+    feed = chainlink.get_feed(token)
+    if contract_creation_block(feed.address) > test_block:
+        pytest.skip('not applicable to feeds deployed after test block')
+    price = chainlink.get_price(token, block=test_block)
     assert price, 'no feed available'
 
 
