@@ -1,5 +1,5 @@
 import pytest
-from brownie import ZERO_ADDRESS
+from brownie import ZERO_ADDRESS, convert
 from yearn.prices.chainlink import chainlink
 
 FEEDS = [
@@ -86,9 +86,10 @@ FEEDS = [
 
 @pytest.mark.parametrize('token', FEEDS)
 def test_chainlink_latest(token):
-    price = chainlink.get_price(token)
-    print(price)
-    assert price, 'no feed available'
+    for token in [token.lower(), convert.to_address(token)]:
+        price = chainlink.get_price(token)
+        print(price)
+        assert price, 'no feed available'
 
 
 @pytest.mark.parametrize('token', FEEDS)

@@ -1,7 +1,7 @@
 import logging
 from typing import Optional
 
-from brownie import ZERO_ADDRESS, Contract, chain
+from brownie import ZERO_ADDRESS, Contract, chain, convert
 from cachetools.func import ttl_cache
 
 from yearn.events import decode_logs, get_logs_asap
@@ -81,17 +81,17 @@ class Chainlink(metaclass=Singleton):
         logger.info(f'loaded {len(self.feeds)} feeds')
 
     def get_feed(self, asset: Address) -> Contract:
-        return contract(self.feeds[asset])
+        return contract(self.feeds[convert.to_address(asset)])
 
     def __contains__(self, asset: AddressOrContract) -> bool:
-        return asset in self.feeds
+        return convert.to_address(asset) in self.feeds
 
     @ttl_cache(maxsize=None, ttl=600)
     def get_price(self, asset: AddressOrContract, block: Optional[Block] = None) -> Optional[float]:
         if asset == ZERO_ADDRESS:
             return None
         try:
-            return self.get_feed(asset).latestAnswer(block_identifier=block) / 1e8
+            return self.get_feed(convert.to_address(asset)).latestAnswer(block_identifier=block) / 1e8
         except ValueError:
             return None
 
